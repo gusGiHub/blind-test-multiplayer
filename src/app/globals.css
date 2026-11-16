@@ -41,7 +41,7 @@ button:not(:disabled), select { cursor: pointer; }
   border-bottom: 3px solid var(--ink);
 }
 .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 900; font-size: 22px; letter-spacing: -1px; text-transform: uppercase; }
-.brand-mark { width: 40px; height: 40px; display: grid; place-items: center; border: 3px solid var(--ink); border-radius: 12px; background: var(--yellow); color: var(--ink); font-size: 25px; transform: rotate(-8deg); box-shadow: 3px 3px 0 var(--ink); }
+.brand-mark { display: block; width: 40px; height: 40px; flex-shrink: 0; }
 .page-shell { width: min(1080px, calc(100% - 48px)); margin: 0 auto; padding: 68px 0 72px; }
 .page-shell--narrow { max-width: 480px; padding-top: 42px; }
 .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); background: var(--paper); border: 2px solid var(--ink); border-radius: 9px; padding: 7px 12px; box-shadow: 2px 2px 0 var(--ink); font-size: 13px; font-weight: 800; margin-bottom: 24px; }

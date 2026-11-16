@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <defs>
+    <path id="note" d="M50 34 106 20V80C106 91 94 100 82 100C71 100 64 94 66 85C68 76 79 70 91 71V45L65 52V94C65 105 53 114 40 114C28 114 21 107 24 98C27 88 39 83 50 85Z"/>
+  </defs>
+  <g stroke="#191919" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <use href="#note" transform="translate(4 4)" fill="#191919"/>
+    <use href="#note" fill="#ffd43b"/>
+    <path d="M23 30 16 22M18 48H8" stroke-width="5"/>
+  </g>
+</svg>

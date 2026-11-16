@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -17,6 +18,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Blind Test — À vous de jouer",
   description: "Crée une salle, invite tes amis et prépare ton blind test musical.",
+  icons: { icon: { url: "/blind-test-logo.svg", type: "image/svg+xml" } },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -29,7 +31,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <a className="sr-only focus:not-sr-only" href="#main-content">Aller au contenu</a>
         <header className="site-header">
           <Link href="/" className="brand" aria-label="Blind Test, accueil">
-            <span className="brand-mark" aria-hidden="true">♫</span>
+            <Image className="brand-mark" src="/blind-test-logo.svg" alt="" width={40} height={40} />
             Blind Test
           </Link>
           <nav className="header-actions" aria-label="Navigation principale">
