@@ -123,7 +123,11 @@ test("personal correction displays typed answers, wrong QCM choices, automatic v
     assert.equal(calls[0].url, "/api/games/12345/access");
     assert.equal(JSON.parse(calls[0].options.body).playerId, "guest");
     assert.ok(f.text().includes("My exact typed answer"));
-    assert.ok(f.text().includes("Title a"));
+    assert.equal(f.nodes("p").filter(node => node.props.className === "review-correct-answer").length, 2, "answer boxes remain only for free-answer rounds");
+    assert.equal(f.nodes("p").filter(node => node.props.className?.startsWith("review-own-answer")).length, 2);
+    const firstContent = f.nodes("div").find(node => node.props.className === "personal-review-content");
+    const firstChildren = [firstContent.props.children].flat(Infinity).filter(node => node && typeof node === "object");
+    assert.equal(firstChildren[0].type, "Choices", "the cards precede timing and points");
     assert.ok(f.text().includes("Aucune réponse enregistrée"));
     assert.ok(f.text().includes("Présélection comptée automatiquement"));
     assert.match(f.text(), /Bonus de rapidité \+\s*5 pts/);
@@ -162,6 +166,7 @@ test("revealed QCM keeps four cards, always marks correct green and only a wrong
             pending: false, disabled: false, serverOffsetMs: 0, correctChoiceId: "a", onAnswer: () => { sent = true; },
         });
         const cards = f.all("button");
+        assert.equal(f.all("p").length, 0, "revealed choices do not repeat the explanatory sentence");
         assert.equal(cards.length, 4);
         assert.ok(cards[0].props.className.includes("answer-choice--correct"));
         assert.equal(cards.filter(card => card.props.className.includes("answer-choice--wrong")).length, selected === "b" ? 1 : 0);

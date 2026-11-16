@@ -45,18 +45,19 @@ export default function PersonalGameReview({ code, playerId, round, review }: {
             const own = ownReview?.find(result => result.questionNumber === item.question.number);
             const result = item.results.find(result => result.playerId === playerId);
             const selected = item.question.choices?.find(choice => choice.id === own?.choiceId);
+            const hasChoiceCards = Boolean(item.question.choices?.length && item.answer.choiceId);
             const answerLabel = own?.text ?? (selected ? `${selected.title} · ${selected.artist}` : own?.answered ? "Réponse enregistrée" : "Aucune réponse enregistrée");
             return <li key={item.question.number}>
                 <details className="personal-review-round">
                     <summary><span className="step-number">{item.question.number}</span><span className="review-track-name">{item.answer.title}<span>{item.answer.artist}</span></span><span className={`badge${own?.correct ? " badge-ready" : " badge-neutral"}`}>{own ? `+${own.points} pts` : result ? `+${result.points} pts` : "Correction"}</span></summary>
                     <div className="personal-review-content">
-                        <p className="review-correct-answer"><strong>Bonne réponse</strong><br />{item.answer.title} · {item.answer.artist}</p>
+                        {!hasChoiceCards && <p className="review-correct-answer"><strong>Bonne réponse</strong><br />{item.answer.title} · {item.answer.artist}</p>}
+                        {!hasChoiceCards && own && <p className={`review-own-answer${own.correct ? " review-own-answer--correct" : own.answered ? " review-own-answer--wrong" : ""}`}><strong>Ta réponse</strong><br />{answerLabel}</p>}
+                        {hasChoiceCards && <QuestionChoices question={item.question} receipt={own?.choiceId ? { questionNumber: item.question.number, choiceId: own.choiceId, confirmed: true } : null} pending={false} disabled={true} serverOffsetMs={0} onAnswer={() => {}} correctChoiceId={item.answer.choiceId} />}
                         {own && <>
-                            <p className={`review-own-answer${own.correct ? " review-own-answer--correct" : own.answered ? " review-own-answer--wrong" : ""}`}><strong>Ta réponse</strong><br />{answerLabel}</p>
                             <p className="review-validation">{!own.answered ? "Aucun envoi reçu avant la clôture." : own.automatic ? "Présélection comptée automatiquement à la clôture · sans bonus." : own.responseMs !== null ? `Validation après ${(own.responseMs / 1000).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} s.` : "Réponse validée."}</p>
                             <dl className="review-breakdown"><div><dt>Bonne réponse</dt><dd>{own.basePoints} pts</dd></div><div><dt>Bonus de rapidité</dt><dd>+{own.bonusPoints} pts</dd></div><div><dt>Total de la manche</dt><dd>{own.points} pts</dd></div></dl>
                         </>}
-                        {item.question.choices && item.answer.choiceId && <QuestionChoices question={item.question} receipt={own?.choiceId ? { questionNumber: item.question.number, choiceId: own.choiceId, confirmed: true } : null} pending={false} disabled={true} serverOffsetMs={0} onAnswer={() => {}} correctChoiceId={item.answer.choiceId} />}
                         {item.answer.spotifyUrl && <a className="inline-link music-link" href={item.answer.spotifyUrl} target="_blank" rel="noopener noreferrer">Écouter sur Spotify ↗</a>}
                     </div>
                 </details>
