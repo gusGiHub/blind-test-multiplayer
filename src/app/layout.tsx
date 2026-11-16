@@ -18,7 +18,13 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Blind Test — À vous de jouer",
   description: "Crée une salle, invite tes amis et prépare ton blind test musical.",
-  icons: { icon: { url: "/blind-test-logo.svg", type: "image/svg+xml" } },
+  icons: {
+    icon: [
+      { url: "/favicon.ico?v=2", type: "image/x-icon", sizes: "16x16 32x32 48x48 64x64" },
+      { url: "/blind-test-logo.svg?v=2", type: "image/svg+xml", sizes: "any" },
+    ],
+    shortcut: "/favicon.ico?v=2",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
