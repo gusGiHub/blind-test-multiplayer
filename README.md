@@ -47,3 +47,5 @@ Les collections en mémoire appartiennent aux routes Next.js. Socket.IO appelle 
 Cette version utilise une seule instance. Les parties, sessions et connexions Spotify disparaissent après un redémarrage ou une mise en veille. La lecture Spotify réelle nécessite un essai dans un navigateur compatible ; les tests automatisés ne prouvent pas son fonctionnement avec un compte réel.
 
 Documentation : [déroulement du jeu](docs/gameplay.md), [moteur et synchronisation](docs/game-engine.md), [Spotify](docs/spotify.md), [déploiement](docs/deployment.md).
+
+La [charte graphique](docs/charte-graphique.md) décrit les couleurs, composants et règles responsive. Ses valeurs partagées sont définies dans `src/app/design-tokens.css`.

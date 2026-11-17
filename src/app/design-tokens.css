@@ -1,0 +1,39 @@
+/* Shared visual values. Reference: docs/charte-graphique.md. */
+:root {
+  color-scheme: light;
+  --background: #fff8e9;
+  --foreground: #191919;
+  --muted: #55534c;
+  --accent: #1554bd;
+  --ink: #191919;
+  --paper: #fffdf6;
+  --yellow: #ffd43b;
+  --yellow-hover: #ffe77a;
+  --teal: #00aa9b;
+  --red: #f34135;
+  --blue: #409cde;
+  --yellow-soft: #fff1bf;
+  --teal-soft: #a6e3da;
+  --blue-soft: #b9ddf7;
+  --success-bg: #c4f1c9;
+  --success-text: #134b2b;
+  --success-border: #176c3c;
+  --error-bg: #ffd5ce;
+  --error-text: #79231f;
+  --error-border: #a62723;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --border-control: 2px;
+  --border-strong: 3px;
+  --radius-control: 12px;
+  --radius-panel: 22px;
+  --radius-card: 14px;
+  --control-height: 52px;
+  --shadow-control: 4px 4px 0 var(--ink);
+  --shadow-panel: 7px 7px 0 var(--ink);
+}

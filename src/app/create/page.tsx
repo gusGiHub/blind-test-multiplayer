@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { DEFAULT_GAME_SETTINGS, type GameSettings } from "@/src/lib/gameSettings";
 import SettingChoices from "./SettingChoices";
+import NumberField from "../components/NumberField";
 
 export default function CreateGame() {
 
@@ -86,21 +87,9 @@ export default function CreateGame() {
                         <SettingChoices<NonNullable<GameSettings["scoring"]>> name="scoring" legend="Attribution des points" value={settings.scoring ?? "classic"} onChange={scoring => setSettings(current => ({ ...current, scoring }))} options={[{ value: "speed", label: "Rapidité", description: "10 points + jusqu’à 10 points de bonus" }, { value: "classic", label: "Classique", description: "10 points par bonne réponse" }]} />
                         {settings.scoring === "speed" && <p className="field-hint">Valide tôt pour gagner le bonus. Sans validation, ton choix est compté à la fin, sans bonus.</p>}
                     </div>
-                    <div className="field">
-                        <label htmlFor="excerpt-duration">Durée de l’extrait (secondes)</label>
-                        <input id="excerpt-duration" type="number" min={1} max={30} step={1} required value={Number.isNaN(settings.excerptSeconds) ? "" : settings.excerptSeconds} onChange={e => { const seconds = e.target.valueAsNumber; setSettings(current => ({ ...current, excerptSeconds: seconds, responseSeconds: Number.isFinite(seconds) ? Math.max(Number.isFinite(current.responseSeconds) ? current.responseSeconds! : seconds, seconds) : current.responseSeconds })); }} />
-                        <p className="field-hint">Entre 1 et 30 secondes de musique.</p>
-                    </div>
-                    <div className="field">
-                        <label htmlFor="response-duration">Temps de réponse (secondes)</label>
-                        <input id="response-duration" type="number" min={settings.excerptSeconds || 1} max={120} step={1} required value={Number.isNaN(settings.responseSeconds) ? "" : settings.responseSeconds ?? settings.excerptSeconds} onChange={e => setSettings(current => ({ ...current, responseSeconds: e.target.valueAsNumber }))} />
-                        <p className="field-hint">Durée totale pour répondre, extrait compris.</p>
-                    </div>
-                    <div className="field">
-                        <label htmlFor="pause-duration">Pause entre les titres (secondes)</label>
-                        <input id="pause-duration" type="number" min={0} max={30} step={1} required value={Number.isNaN(settings.pauseSeconds) ? "" : settings.pauseSeconds} onChange={e => setSettings(current => ({ ...current, pauseSeconds: e.target.valueAsNumber }))} />
-                        <p className="field-hint">Durée d’affichage du résultat. À 0, les titres s’enchaînent.</p>
-                    </div>
+                    <NumberField id="excerpt-duration" label="Durée de l’extrait" min={1} max={30} value={settings.excerptSeconds} disabled={pending} hint="De 1 à 30 secondes." onChange={seconds => setSettings(current => ({ ...current, excerptSeconds: seconds, responseSeconds: Number.isFinite(seconds) ? Math.max(Number.isFinite(current.responseSeconds) ? current.responseSeconds! : seconds, seconds) : current.responseSeconds }))} />
+                    <NumberField id="response-duration" label="Temps de réponse" min={settings.excerptSeconds || 1} max={120} value={settings.responseSeconds ?? settings.excerptSeconds} disabled={pending} hint="Durée totale pour répondre, extrait compris." onChange={responseSeconds => setSettings(current => ({ ...current, responseSeconds }))} />
+                    <NumberField id="pause-duration" label="Pause entre les titres" min={0} max={30} value={settings.pauseSeconds} disabled={pending} hint="Durée d’affichage du résultat. À 0, les titres s’enchaînent." onChange={pauseSeconds => setSettings(current => ({ ...current, pauseSeconds }))} />
                     <div className="field">
                         <SettingChoices<GameSettings["excerptPosition"]> name="excerpt-position" legend="Position de l’extrait" value={settings.excerptPosition} onChange={excerptPosition => setSettings(current => ({ ...current, excerptPosition }))} options={[{ value: "start", label: "Début" }, { value: "random", label: "Aléatoire" }, { value: "middle", label: "Milieu" }]} />
                     </div>

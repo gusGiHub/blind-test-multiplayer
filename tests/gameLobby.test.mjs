@@ -83,6 +83,55 @@ function questionFixture(filename, props) {
     return { render, all: type => walk(render()).filter(node => node.type === type), tick: () => ticks.forEach(tick => tick()) };
 }
 
+test("number fields keep native validation, enforce stepper limits and recover an empty value", () => {
+    const changes = [];
+    const props = { id: "duration", label: "Durée", value: 1, min: 1, max: 30, hint: "De 1 à 30 secondes.", onChange: value => { changes.push(value); props.value = value; } };
+    const f = questionFixture("../../components/NumberField", props);
+    assert.equal(f.all("button")[0].props.disabled, true);
+    assert.equal(f.all("button")[1].props.type, "button", "stepper must not submit the form");
+    f.all("button")[1].props.onClick();
+    assert.equal(props.value, 2);
+    props.value = 30;
+    assert.equal(f.all("button")[1].props.disabled, true);
+    f.all("button")[1].props.onClick();
+    assert.equal(props.value, 30);
+    f.all("button")[0].props.onClick();
+    assert.equal(props.value, 29);
+    const input = f.all("input")[0].props;
+    assert.equal(input.type, "number");
+    assert.equal(input.inputMode, "numeric");
+    assert.equal(input.required, true);
+    assert.equal(input.min, 1);
+    assert.equal(input.max, 30);
+    assert.equal(input.step, 1);
+    assert.equal(input["aria-describedby"], "duration-hint");
+    assert.equal(f.all("label")[0].props.htmlFor, input.id);
+    input.onChange({ target: { valueAsNumber: Number.NaN } });
+    assert.ok(Number.isNaN(props.value));
+    assert.equal(f.all("input")[0].props.value, "");
+    f.all("button")[1].props.onClick();
+    assert.equal(props.value, 1);
+    props.disabled = true;
+    assert.ok(f.all("button").every(button => button.props.disabled));
+    assert.equal(f.all("input")[0].props.disabled, true);
+    const before = changes.length;
+    f.all("button")[1].props.onClick();
+    assert.equal(changes.length, before);
+});
+
+test("number fields accept zero pauses and respect the response duration minimum", () => {
+    for (const [min, max] of [[0, 30], [20, 120]]) {
+        const props = { id: "duration", label: "Durée", min, max, value: min, onChange: value => { props.value = value; } };
+        const f = questionFixture("../../components/NumberField", props);
+        f.all("button")[0].props.onClick();
+        assert.equal(props.value, min);
+        assert.equal(f.all("input")[0].props.min, min);
+        props.value = max;
+        f.all("button")[1].props.onClick();
+        assert.equal(props.value, max);
+    }
+});
+
 function personalReviewFixture(props, fetchMock) {
     const states = [], exported = {};
     let cursor = 0, dependencies, pendingEffect, cleanup;
