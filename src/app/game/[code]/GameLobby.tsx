@@ -351,18 +351,18 @@ export default function GameLobby(props: GameLobbyProps) {
                         ))}
                     </ul>
                     <div className="lobby-readiness">
-                        <div role="status"><strong>{readyCount} / {players.length} prêts</strong><p className="field-hint">{allReady ? "Tout le monde est prêt !" : "Chaque joueur confirme quand il est prêt à jouer."}</p></div>
+                        <div role="status"><strong>{readyCount} / {players.length} prêts</strong></div>
                         <button className={`btn ${ownReady ? "btn-secondary" : "btn-primary"}`} type="button" aria-pressed={ownReady} aria-busy={readyPending} disabled={!connected || pending || playlistPending || readyPending} onClick={toggleReady}>{readyPending ? "Enregistrement…" : ownReady ? "Je ne suis plus prêt" : "Je suis prêt ✓"}</button>
                     </div>
                     <div className="lobby-actions">
                         {props.isHost ? (
                             <>
                                 <StartGameButton onStart={() => sendCommand("start_game")} disabled={!connected || pending || !audioReady || !roomPlaylist || playlistPending || readyPending || !allReady} pending={pending} />
-                                {!allReady && <p className="field-hint">En attente de la confirmation de tous les joueurs, hôte compris.</p>}
-                                {!audioReady && <p className="field-hint">Active le son Spotify et attends « Lecteur prêt » pour démarrer.</p>}
-                                <p>{roomPlaylist ? "Un nouveau tirage sera effectué depuis la playlist choisie au démarrage." : "Choisis la playlist de cette salle ci-dessus avant de démarrer."}</p>
+                                {!allReady && <p className="field-hint">Tous les joueurs doivent être prêts.</p>}
+                                {!audioReady && <p className="field-hint">Active le son pour démarrer.</p>}
+                                {!roomPlaylist && <p>Choisis une playlist pour démarrer.</p>}
                             </>
-                        ) : <p>L’hôte lancera la partie quand tout le monde sera prêt.</p>}
+                        ) : <p>En attente de l’hôte.</p>}
                     </div>
                 </>
             )}
@@ -395,17 +395,15 @@ export default function GameLobby(props: GameLobbyProps) {
                     <div className="question-state">
                         <div className="music-symbol" aria-hidden="true">?</div>
                         <p className="eyebrow">Manche {progress.question.number} sur {progress.question.total} terminée</p>
-                        <h2>On garde le suspense !</h2>
-                        <p>Les bonnes réponses et les scores seront dévoilés à la fin de la partie.</p>
+                        <h2>Manche terminée</h2>
+                        <p>Réponses et scores en fin de partie.</p>
                         {progress.endsAt !== undefined && <RoundCountdown endsAt={progress.endsAt} serverOffsetMs={serverOffsetMs} />}
                         {props.isHost && <button className="btn btn-primary" disabled={!connected || pending} onClick={() => sendCommand("next_question")}>{pending ? "Chargement…" : progress.question.number === progress.question.total ? "Voir les réponses et le classement" : "Question suivante"}</button>}
                     </div>
                 )}
                 {progress?.status === "finished" && (
                     <div className="question-state">
-                        <p className="eyebrow">Fin de partie</p>
-                        <h2>Merci d’avoir joué !</h2>
-                        <p>Les {progress.questionCount} questions sont terminées.</p>
+                        <h2>Classement final</h2>
                         {progress.ranking && <ol className="score-list" aria-label="Classement final">{progress.ranking.map(player => <li key={player.playerId}><span><span className="badge badge-neutral">{player.rank}</span> {player.nickname}</span><strong>{player.score} pts</strong></li>)}</ol>}
                         {progress.review && <PersonalGameReview code={props.code} playerId={props.playerId} round={reviewRound} review={progress.review} />}
                         <div className="end-game-actions">

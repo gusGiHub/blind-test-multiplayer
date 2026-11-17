@@ -22,7 +22,6 @@ export default function MusicArtwork() {
           <path d="m324 42 8-22m14 28 17-13M21 129l-12-9m12 34H7m442 24 17-7m-17 31 20 3" />
         </g>
       </svg>
-      <span className="artwork-caption">Un vinyle. Des amis. À toi de jouer.</span>
     </div>
   );
 }

@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Blind Test — À vous de jouer",
-  description: "Crée une salle, invite tes amis et prépare ton blind test musical.",
+  title: "Blind Test",
+  description: "Blind test multijoueur avec tes playlists Spotify.",
   icons: {
     icon: [
       { url: "/favicon.ico?v=2", type: "image/x-icon", sizes: "16x16 32x32 48x48 64x64" },

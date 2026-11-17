@@ -42,9 +42,7 @@ export default function SpotifyQuestionPreviewPanel({ playlist, disabled }: { pl
 
     return (
         <section className="question-preview" aria-labelledby={`${selectId}-title`}>
-            <p className="eyebrow">Génération automatique</p>
-            <h2 id={`${selectId}-title`}>Aperçu depuis ta playlist</h2>
-            <p className="muted">Les titres et artistes de <strong>{playlist.name}</strong> servent à préparer les réponses. Rien à renseigner à la main.</p>
+            <h2 id={`${selectId}-title`}>Aperçu des questions</h2>
             <form className="preview-controls" onSubmit={(event) => { event.preventDefault(); void generate(); }}>
                 <div className="field">
                     <label htmlFor={selectId}>Nombre de questions</label>
@@ -73,7 +71,7 @@ export default function SpotifyQuestionPreviewPanel({ playlist, disabled }: { pl
                     </ol>
                 </div>
             )}
-            <p className="field-hint">Cet aperçu est un exemple indépendant. Un nouveau tirage sera effectué au démarrage de chaque partie ; les morceaux de cet aperçu ne sont pas réservés pour la partie.</p>
+            <p className="field-hint">Les titres sont tirés à nouveau au début de chaque partie.</p>
         </section>
     );
 }

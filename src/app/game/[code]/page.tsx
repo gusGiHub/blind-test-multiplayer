@@ -69,9 +69,7 @@ export default async function GamePage({ params, searchParams }: {
     return (
         <main id="main-content" className="page-shell">
             <div className="game-heading">
-                <p className="eyebrow">Votre salle de jeu</p>
-                <h1>Bienvenue, {currentPlayer.nickname}.</h1>
-                <p className="muted">Le rendez-vous est pris. À vous de jouer.</p>
+                <h1>Partie de {host?.nickname ?? "l’hôte"}</h1>
             </div>
             <div className="game-grid">
                 <aside className="panel room-info" aria-label="Informations de la partie">

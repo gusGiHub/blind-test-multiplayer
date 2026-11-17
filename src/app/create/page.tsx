@@ -62,12 +62,10 @@ export default function CreateGame() {
             <Link href="/" className="back-link"><span aria-hidden="true">←</span> Retour à l’accueil</Link>
             <section className="panel" aria-labelledby="create-title">
                 <div className="form-heading">
-                    <p className="eyebrow">À toi de donner le tempo</p>
                     <h1 id="create-title">Créer une partie</h1>
-                    <p className="muted">Prépare ta salle, puis invite tes amis.</p>
                 </div>
                 <p className="selection-note">
-                    {playlistName ? <>Playlist par défaut : <strong>{playlistName}</strong>. Tu pourras la changer dans le lobby.</> : <>Tu pourras connecter Spotify et choisir ta playlist directement dans le lobby après la création de la salle.</>}
+                    {playlistName ? <>Playlist : <strong>{playlistName}</strong>. Modifiable dans le lobby.</> : <>Tu choisiras ta playlist dans le lobby.</>}
                 </p>
                 <form className="form-stack" onSubmit={(event) => { event.preventDefault(); void handleCreate(); }}>
                     <div className="field">
@@ -75,19 +73,18 @@ export default function CreateGame() {
                         <input id="nickname" name="nickname" type="text" autoComplete="nickname" placeholder="Ex. DJ du dimanche" maxLength={30} required value={pseudo} onChange={(e) => setPseudo(e.target.value)} />
                     </div>
                     <div className="field">
-                        <SettingChoices name="question-count" legend="Nombre de questions" value={questionCount} onChange={setQuestionCount} options={[{ value: 5, label: "5", description: "Express" }, { value: 10, label: "10", description: "Classique" }, { value: 15, label: "15", description: "Marathon" }]} />
-                        <p className="field-hint">Choisis le format de votre partie.</p>
+                        <SettingChoices name="question-count" legend="Nombre de questions" value={questionCount} onChange={setQuestionCount} options={[{ value: 5, label: "5" }, { value: 10, label: "10" }, { value: 15, label: "15" }]} />
                     </div>
                     <div className="field">
                         <SettingChoices<GameSettings["mode"]> name="game-mode" legend="Mode de jeu" value={settings.mode} onChange={mode => setSettings(current => ({ ...current, mode }))} options={[{ value: "qcm", label: "QCM", description: "4 propositions, un bon titre" }, { value: "free", label: "Réponse libre", description: "À toi de retrouver le titre" }]} />
-                        {settings.mode === "free" && <p className="field-hint">Le titre suffit. Parenthèses, casse, accents et ponctuation ignorés. Jusqu’à 5 caractères : titre exact ; de 6 à 11 : une petite faute ; à partir de 12 : deux maximum. Les nombres restent exacts.</p>}
+                        {settings.mode === "free" && <p className="field-hint">Le titre suffit. Accents et petites fautes tolérés ; titres courts et nombres exacts.</p>}
                     </div>
                     <div className="field">
                         <SettingChoices<NonNullable<GameSettings["revealMode"]>> name="reveal-mode" legend="Quand révéler les réponses ?" value={settings.revealMode ?? "each"} onChange={revealMode => setSettings(current => ({ ...current, revealMode }))} options={[{ value: "each", label: "Après chaque titre", description: "Correction et scores à chaque manche" }, { value: "end", label: "Tout à la fin", description: "Réponses et classement gardés secrets" }]} />
                     </div>
                     <div className="field">
                         <SettingChoices<NonNullable<GameSettings["scoring"]>> name="scoring" legend="Attribution des points" value={settings.scoring ?? "classic"} onChange={scoring => setSettings(current => ({ ...current, scoring }))} options={[{ value: "speed", label: "Rapidité", description: "10 points + jusqu’à 10 points de bonus" }, { value: "classic", label: "Classique", description: "10 points par bonne réponse" }]} />
-                        {settings.scoring === "speed" && <p className="field-hint">Le bonus diminue avec le temps de validation. Une présélection validée automatiquement à la fin rapporte 10 points si elle est correcte, sans bonus.</p>}
+                        {settings.scoring === "speed" && <p className="field-hint">Valide tôt pour gagner le bonus. Sans validation, ton choix est compté à la fin, sans bonus.</p>}
                     </div>
                     <div className="field">
                         <label htmlFor="excerpt-duration">Durée de l’extrait (secondes)</label>
@@ -97,15 +94,15 @@ export default function CreateGame() {
                     <div className="field">
                         <label htmlFor="response-duration">Temps de réponse (secondes)</label>
                         <input id="response-duration" type="number" min={settings.excerptSeconds || 1} max={120} step={1} required value={Number.isNaN(settings.responseSeconds) ? "" : settings.responseSeconds ?? settings.excerptSeconds} onChange={e => setSettings(current => ({ ...current, responseSeconds: e.target.valueAsNumber }))} />
-                        <p className="field-hint">Délai total depuis le début de l’extrait jusqu’au résultat. Au moins la durée d’écoute, jusqu’à 120 secondes. Par exemple : 10 secondes de musique et 20 secondes pour répondre.</p>
+                        <p className="field-hint">Durée totale pour répondre, extrait compris.</p>
                     </div>
                     <div className="field">
                         <label htmlFor="pause-duration">Pause entre les titres (secondes)</label>
                         <input id="pause-duration" type="number" min={0} max={30} step={1} required value={Number.isNaN(settings.pauseSeconds) ? "" : settings.pauseSeconds} onChange={e => setSettings(current => ({ ...current, pauseSeconds: e.target.valueAsNumber }))} />
-                        <p className="field-hint">Le résultat reste affiché pendant cette pause. À 0, le passage au titre suivant est immédiat.</p>
+                        <p className="field-hint">Durée d’affichage du résultat. À 0, les titres s’enchaînent.</p>
                     </div>
                     <div className="field">
-                        <SettingChoices<GameSettings["excerptPosition"]> name="excerpt-position" legend="Position de l’extrait" value={settings.excerptPosition} onChange={excerptPosition => setSettings(current => ({ ...current, excerptPosition }))} options={[{ value: "start", label: "Début", description: "Dès la première note" }, { value: "random", label: "Aléatoire", description: "La surprise" }, { value: "middle", label: "Milieu", description: "Au cœur du titre" }]} />
+                        <SettingChoices<GameSettings["excerptPosition"]> name="excerpt-position" legend="Position de l’extrait" value={settings.excerptPosition} onChange={excerptPosition => setSettings(current => ({ ...current, excerptPosition }))} options={[{ value: "start", label: "Début" }, { value: "random", label: "Aléatoire" }, { value: "middle", label: "Milieu" }]} />
                     </div>
                     {error && <p className="alert" role="alert">{error}</p>}
                     <button className="btn btn-primary btn-full" type="submit" disabled={pending} aria-busy={pending}>{pending ? "Création..." : "Créer ma partie"}</button>

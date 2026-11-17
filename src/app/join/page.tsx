@@ -49,7 +49,6 @@ export default function JoinGame() {
             <Link href="/" className="back-link"><span aria-hidden="true">←</span> Retour à l’accueil</Link>
             <section className="panel" aria-labelledby="join-title">
                 <div className="form-heading">
-                    <p className="eyebrow">Une place t’attend</p>
                     <h1 id="join-title">Rejoindre une partie</h1>
                     <p className="muted">Entre le code partagé par l’hôte.</p>
                 </div>

@@ -206,7 +206,7 @@ export default function HostSpotifyAudio({ code, playerId, progress, serverOffse
 
     return <section className="host-audio" aria-label="Son de l’hôte">
         <div className="lobby-header"><strong>Son chez l’hôte</strong><span className="badge badge-neutral">{deviceId ? "Lecteur prêt" : pending ? "Connexion…" : "À activer"}</span></div>
-        <p className="field-hint">Les autres joueurs écoutent sur tes enceintes. Spotify Premium est nécessaire sur ce navigateur.</p>
+        <p className="field-hint">Le son est joué sur cet appareil. Spotify Premium requis.</p>
         {error && <p className="alert" role="alert">{error}</p>}
         {error && diagnostic && <details className="selection-note">
             <summary>Dernier diagnostic Spotify</summary>

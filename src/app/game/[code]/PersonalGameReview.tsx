@@ -35,9 +35,7 @@ export default function PersonalGameReview({ code, playerId, round, review }: {
     }, [code, playerId, round, attempt]);
 
     return <section className="final-review" aria-labelledby="review-title">
-        <p className="eyebrow">Le débrief</p>
-        <h3 id="review-title">Ta correction, titre par titre</h3>
-        <p className="field-hint">Ouvre une manche pour retrouver ta réponse et le détail des points. Tes réponses restent privées.</p>
+        <h3 id="review-title">Tes réponses</h3>
         {loading && <p className="muted" role="status">Chargement de tes réponses…</p>}
         {error && <><p className="alert" role="alert">{error}</p><button className="btn btn-secondary" onClick={() => setAttempt(current => current + 1)}>Réessayer</button></>}
         {!loading && !error && !ownReview && <p className="selection-note">Les réponses personnelles ne sont pas disponibles pour cette ancienne partie.</p>}

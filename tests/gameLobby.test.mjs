@@ -802,7 +802,7 @@ test("host UI progresses to finish and ignores snapshots or events older than th
     assert.equal(f.emitted.at(-1).name, "next_question");
     assert.equal(f.emitted.at(-1).payload.questionNumber, 2);
     f.receive("game_updated", f.snapshot({ status: "finished", questionCount: 2 }));
-    assert.ok(f.text().includes("Merci d’avoir joué"));
+    assert.ok(f.text().includes("Classement final"));
     f.receive("game_updated", f.snapshot(result(2)));
     assert.ok(!f.text().includes("Answer 2"));
     f.cleanup();
@@ -837,7 +837,7 @@ test("hidden-result UI keeps corrections and points for the final review", () =>
     const f = lobbyFixture();
     f.receive("game_joined", f.snapshot(question(1)));
     f.receive("game_updated", f.snapshot({ status: "result", question: question(1).question, endsAt: 20000 }));
-    assert.ok(f.text().includes("On garde le suspense"));
+    assert.ok(f.text().includes("Manche terminée"));
     assert.ok(!f.text().includes("Bonne réponse"));
     assert.equal(f.find(node => node.type === "Choices"), undefined);
     f.receive("game_updated", f.snapshot({ status: "finished", questionCount: 2, review: [{ question: question(1).question, answer: { title: "Final secret", artist: "Artist" }, results: [{ playerId: "host", correct: true, points: 17 }] }] }));

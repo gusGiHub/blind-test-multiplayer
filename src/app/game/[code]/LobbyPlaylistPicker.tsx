@@ -66,12 +66,11 @@ export default function LobbyPlaylistPicker({ code, playerId, selectedPlaylist, 
     const wrongOrigin = connection?.appUrl && origin && connection.appUrl !== origin;
     return <section className="lobby-playlist-picker" aria-label="Playlist de la partie">
         <div className="lobby-header"><h3>Playlist de la partie</h3>{connection?.connected && <span className="badge badge-neutral">Spotify connecté</span>}</div>
-        <p className="selection-note">{selectedPlaylist ? <>Choix de la salle : <strong>{selectedPlaylist.name}</strong></> : "Aucune playlist choisie pour cette salle."}</p>
         {error && <p className="alert" role="alert">{error}</p>}
         {loading ? <p role="status" className="muted">Chargement des playlists…</p> : !connection ? <p className="muted">Impossible de vérifier la connexion Spotify. Réessaie dans quelques instants.</p> : !connection.configured ? <p>La connexion Spotify doit être configurée. <Link className="inline-link" href="/spotify">Ouvrir les paramètres Spotify</Link></p> : wrongOrigin ? <p>Pour connecter Spotify, utilise l’adresse {connection.appUrl}. <Link className="inline-link" href="/spotify">Vérifier la connexion</Link></p> : <>
             {(!connection.connected || !connection.playbackAuthorized) && <form action="/api/spotify/login" method="post">
                 <input type="hidden" name="gameCode" value={code} /><input type="hidden" name="playerId" value={playerId} />
-                <p className="field-hint">{connection.connected ? "Autorise la lecture audio pour jouer les extraits chez toi." : "Connecte ton compte Spotify pour retrouver tes playlists. Tu reviendras dans ce lobby après la connexion."}</p>
+                {connection.connected && <p className="field-hint">Autorise Spotify à lire les extraits.</p>}
                 <button className="btn btn-secondary" disabled={disabled || pending} type="submit">{connection.connected ? "Autoriser la lecture Spotify" : "Connecter Spotify"}</button>
             </form>}
             {connection.connected && <>

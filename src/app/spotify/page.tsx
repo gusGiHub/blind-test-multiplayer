@@ -47,8 +47,8 @@ export default function SpotifyPage() {
                 const callbackError = new URLSearchParams(window.location.search).get("error");
                 if (callbackError) {
                     const messages: Record<string, string> = {
-                        configuration: "Renseigne le Client ID Spotify et l’URL de l’application dans .env.local, puis redémarre le serveur.",
-                        origin: "Utilise cette adresse pour connecter Spotify. Les sessions de localhost et 127.0.0.1 sont distinctes.",
+                        configuration: "La connexion Spotify est indisponible pour le moment.",
+                        origin: "Ouvre Spotify depuis l’adresse de l’application.",
                         authorization: "La connexion Spotify a été annulée, a expiré ou a échoué. Tu peux réessayer.",
                     };
                     setError(messages[callbackError] ?? "La connexion Spotify a échoué.");
@@ -120,9 +120,7 @@ export default function SpotifyPage() {
             {status?.currentGame && <Link className="btn btn-secondary" href={status.currentGame.href}>Retour à ma partie · {status.currentGame.code}</Link>}
             <Link href="/" className="back-link"><span aria-hidden="true">←</span> Retour à l’accueil</Link>
             <div className="game-heading">
-                <p className="eyebrow">Ta bibliothèque</p>
-                <h1>Tes playlists Spotify.</h1>
-                <p className="muted">Connecte ton compte et retrouve tes playlists en lecture seule.</p>
+                <h1>Spotify</h1>
             </div>
             <section className="panel" aria-label="Connexion Spotify">
                 {error && <p className="alert" role="alert">{error}</p>}
@@ -130,13 +128,12 @@ export default function SpotifyPage() {
                     <button className="btn btn-secondary" onClick={() => { setLoading(true); setError(null); setRefreshKey((key) => key + 1); }}>Réessayer</button>
                 ) : !status.configured ? (
                     <>
-                        <h2>La configuration Spotify reste à renseigner.</h2>
-                        <p className="muted">Ajoute le Client ID dans ton fichier .env.local et enregistre l’URL de retour chez Spotify. Le guide docs/spotify.md détaille les étapes.</p>
+                        <h2>Connexion indisponible</h2>
+                        <p className="muted">Spotify n’est pas encore configuré pour ce site.</p>
                     </>
                 ) : wrongOrigin ? (
                     <>
                         <h2>Utilise l’adresse prévue pour Spotify.</h2>
-                        <p className="muted">Pour conserver le cookie de session pendant la connexion, ouvre aussi tes parties sur cette adresse.</p>
                         <a className="btn btn-primary" href={`${status.appUrl}/spotify`}>Ouvrir {status.appUrl}</a>
                     </>
                 ) : status.connected ? (
@@ -146,9 +143,9 @@ export default function SpotifyPage() {
                             <button className="btn btn-secondary" disabled={pending} onClick={() => void disconnect()}>Déconnecter Spotify</button>
                         </div>
                         {status.selectedPlaylist && <p className="selection-note" role="status">Playlist sélectionnée : <strong>{status.selectedPlaylist.name}</strong></p>}
-                        {status.selectedPlaylist && <SpotifyQuestionPreviewPanel key={status.selectedPlaylist.id} playlist={status.selectedPlaylist} disabled={pending} />}
+                        {status.selectedPlaylist && <details className="spotify-preview"><summary>Voir un exemple de questions</summary><SpotifyQuestionPreviewPanel key={status.selectedPlaylist.id} playlist={status.selectedPlaylist} disabled={pending} /></details>}
                         <div className="selection-note">
-                            <p>{status.playbackAuthorized ? "Autorisations audio accordées. Retourne dans ta partie et active le son sur ce navigateur." : "Ton compte est connecté, mais cette connexion ne dispose pas de toutes les autorisations audio. Autorise la lecture ci-dessous, puis sélectionne à nouveau ta playlist."}</p>
+                            <p>{status.playbackAuthorized ? "Compte connecté. Tu peux activer le son dans le lobby." : "Autorise Spotify à lire les extraits, puis choisis ta playlist."}</p>
                             {!status.playbackAuthorized && <>
                                 {Boolean(status.missingPlaybackScopes?.length) && <details><summary>Détail des permissions manquantes</summary><p>{status.missingPlaybackScopes?.join(", ")}</p></details>}
                                 <form action="/api/spotify/login" method="post"><button className="btn btn-secondary" type="submit">Autoriser la lecture Spotify</button></form>
@@ -175,13 +172,14 @@ export default function SpotifyPage() {
                     </>
                 ) : (
                     <>
-                        <h2>Retrouve tes playlists.</h2>
-                        <p className="muted">Spotify te demandera de consulter tes playlists et de jouer le son chez l’hôte. Son lecteur nécessite aussi les permissions de profil et d’adresse e-mail ; l’application ne récupère ni ne conserve ces informations. Aucun droit de modification des playlists n’est demandé.</p>
+                        <h2>Connecter Spotify</h2>
+                        <p className="muted">Un compte Premium est nécessaire pour lire les extraits.</p>
+                        <details className="spotify-permissions"><summary>Autorisations demandées</summary><p className="muted">Accès aux playlists et à la lecture audio. Spotify demande aussi l’accès au profil et à l’adresse e-mail pour son lecteur ; ces informations ne sont pas conservées par l’application. Tes playlists ne sont pas modifiées.</p></details>
                         <form action="/api/spotify/login" method="post"><button className="btn btn-primary" type="submit">Connecter mon compte Spotify</button></form>
                     </>
                 )}
             </section>
-            <p className="spotify-footnote">La sélection est conservée dans ta session pour préparer les questions et lire les extraits chez l’hôte. La déconnexion retire les jetons de cette application ; les autorisations Spotify peuvent être retirées dans ton compte Spotify.</p>
+            <p className="spotify-footnote">Tu peux retirer l’accès à l’application depuis ton compte Spotify.</p>
         </main>
     );
 }

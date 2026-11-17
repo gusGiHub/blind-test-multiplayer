@@ -76,13 +76,7 @@ p { font-weight: 500; }
 .btn-full { width: 100%; }
 .panel { background: var(--paper); border: 3px solid var(--ink); border-radius: 22px; padding: 32px; box-shadow: 7px 7px 0 var(--ink); min-width: 0; }
 .panel > :last-child { margin-bottom: 0; }
-.steps-panel { position: relative; overflow: hidden; background: var(--yellow); margin-bottom: 40px; }
-.steps-panel h2 { margin-bottom: 28px; }
-.steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px; }
-.steps li { display: flex; align-items: flex-start; gap: 16px; }
 .step-number { display: grid; place-items: center; flex-shrink: 0; width: 38px; height: 38px; border: 3px solid var(--ink); border-radius: 50%; font-family: var(--font-geist-mono), monospace; font-size: 13px; font-weight: 800; color: var(--ink); background: var(--paper); }
-.step-title { margin: 0 0 4px; font-size: 15px; font-weight: 800; }
-.step-description { margin: 0; font-size: 13px; color: var(--muted); }
 .home-footer { padding-top: 24px; border-top: 2px solid var(--ink); display: flex; justify-content: space-between; gap: 16px; color: var(--muted); font-size: 12px; font-weight: 650; }
 .form-heading { margin-bottom: 28px; }
 .form-heading h1 { font-size: 30px; }
@@ -142,7 +136,6 @@ p { font-weight: 500; }
 .question-state p { color: var(--muted); font-size: 14px; }
 @media (max-width: 760px) {
   .hero { grid-template-columns: 1fr; gap: 36px; padding-top: 8px; }
-  .steps { grid-template-columns: 1fr; gap: 22px; }
   .game-grid { grid-template-columns: 1fr; }
   .room-info { grid-template-columns: 1fr 1fr; align-items: center; gap: 20px; }
   .room-details { padding: 0 0 0 20px; border-top: 0; border-left: 1px solid #19191935; }
@@ -278,7 +271,7 @@ a.track-title:hover { color: var(--ink); background: var(--yellow); }
 .music-artwork { position: relative; isolation: isolate; padding: 46px 12px 18px; background: var(--teal); border: 4px solid var(--ink); border-radius: 42% 36% 12% 15% / 18% 22% 12% 14%; box-shadow: 9px 9px 0 var(--ink); transform: rotate(3deg); }
 .music-artwork svg { display: block; width: 100%; height: auto; color: var(--ink); }
 .artwork-sticker { position: absolute; top: -16px; left: 18px; padding: 8px 18px; background: var(--yellow); border: 3px solid var(--ink); border-radius: 10px; font-size: 18px; font-weight: 900; text-transform: uppercase; transform: rotate(-9deg); }
-.artwork-caption { display: block; margin: 12px 6px 0; text-align: center; font-size: 12px; font-weight: 800; }
+.spotify-permissions, .spotify-preview { margin: 20px 0; }
 .page-shell--narrow .panel { border-top: 10px solid var(--teal); }
 .form-heading h1 { font-size: clamp(30px, 6vw, 38px); }
 .field label { font-weight: 750; }
