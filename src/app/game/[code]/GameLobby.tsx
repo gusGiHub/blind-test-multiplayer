@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
-import { io, type Socket } from "socket.io-client";
+import { io } from "socket.io-client";
+import { createHttpGameConnection, type GameConnection } from "@/src/lib/httpGameConnection";
 import type { Game, GameStatus, Player } from "@/src/types/game";
 import type { GameProgress, GameSnapshot, GameUpdate, LobbyPlaylistUpdate, AnswerCountUpdate, PlayerReadyUpdate } from "@/src/types/gameProgress";
 import StartGameButton from "./StartGameButton";
@@ -47,7 +48,7 @@ function mergeReadyPlayers(current: Player[], incoming: Player[]): Player[] {
 }
 
 export default function GameLobby(props: GameLobbyProps) {
-    const socketRef = useRef<Socket | null>(null);
+    const socketRef = useRef<GameConnection | null>(null);
     const commandRef = useRef(false);
     const playlistCommandRef = useRef(false);
     const playlistRevisionRef = useRef(props.initialPlaylistRevision ?? 0);
@@ -83,7 +84,7 @@ export default function GameLobby(props: GameLobbyProps) {
     const ownRoundScore = progress?.status === "result" ? progress.scores?.find(score => score.playerId === props.playerId) : undefined;
 
     useEffect(() => {
-        const socket = io({ autoConnect: false });
+        const socket = process.env.NEXT_PUBLIC_GAME_TRANSPORT === "http" ? createHttpGameConnection() : io({ autoConnect: false });
         socketRef.current = socket;
         const clearPending = () => {
             commandRef.current = false;

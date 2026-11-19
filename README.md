@@ -32,7 +32,9 @@ npm run test:production
 
 `npm start` lance le serveur personnalisé compilé en production, avec Socket.IO. L’hébergement doit fournir une origine HTTPS dans `APP_URL` et son port dans `PORT`.
 
-Voir [le guide de déploiement Render](docs/deployment.md) et [render.yaml](render.yaml) pour les commandes, variables et réglages Spotify. Aucune base de données ni installation supplémentaire n’est requise pour cette première version.
+Pour Vercel, suivre [le guide Vercel + Supabase](docs/vercel.md). Les API utilisent PostgreSQL et le lobby se synchronise par HTTP, sans serveur personnalisé permanent.
+
+Pour un serveur Node classique, voir [le guide de déploiement Render](docs/deployment.md) et [render.yaml](render.yaml). Ce mode peut continuer à fonctionner en mémoire, sans base de données.
 
 ## Architecture et limites
 
@@ -42,9 +44,9 @@ Voir [le guide de déploiement Render](docs/deployment.md) et [render.yaml](rend
 - `server.ts` : serveur HTTP partagé entre Next.js et Socket.IO.
 - `tests` : moteur, API, composants, sessions et échanges Socket.IO ; les appels Spotify sont simulés.
 
-Les collections en mémoire appartiennent aux routes Next.js. Socket.IO appelle ces routes et diffuse leurs vues publiques ; les réponses et jetons restent séparés des diffusions publiques.
+Sur Vercel, les routes chargent et enregistrent l’état dans Supabase sous verrou ; voir les limites du snapshot et de la synchronisation dans le guide de déploiement. En mode Node local, les collections en mémoire appartiennent aux routes Next.js. Socket.IO appelle ces routes et diffuse leurs vues publiques ; les réponses et jetons restent séparés des diffusions publiques.
 
-Cette version utilise une seule instance. Les parties, sessions et connexions Spotify disparaissent après un redémarrage ou une mise en veille. La lecture Spotify réelle nécessite un essai dans un navigateur compatible ; les tests automatisés ne prouvent pas son fonctionnement avec un compte réel.
+Le mode mémoire utilise une seule instance. Dans ce mode, les parties, sessions et connexions Spotify disparaissent après un redémarrage ou une mise en veille. La lecture Spotify réelle nécessite un essai dans un navigateur compatible ; les tests automatisés ne prouvent pas son fonctionnement avec un compte réel.
 
 Documentation : [déroulement du jeu](docs/gameplay.md), [moteur et synchronisation](docs/game-engine.md), [Spotify](docs/spotify.md), [déploiement](docs/deployment.md).
 

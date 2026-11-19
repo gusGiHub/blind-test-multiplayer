@@ -1,8 +1,9 @@
+import { withGameStore } from "@/src/lib/sharedStore";
 import { NextResponse } from "next/server";
 import { readPlayerSession } from "@/src/lib/playerSession";
 import { getSpotifyPlaylists, SpotifyError } from "@/src/lib/spotify";
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
     const value = new URL(request.url).searchParams.get("offset") ?? "0";
     const offset = Number(value);
     if (!/^\d+$/.test(value) || !Number.isSafeInteger(offset) || offset > 100000) {
@@ -20,3 +21,5 @@ export async function GET(request: Request) {
         });
     }
 }
+export const GET = withGameStore(handleGET);
+export const maxDuration = 60;

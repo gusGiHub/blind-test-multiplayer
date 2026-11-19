@@ -1,3 +1,4 @@
+import { withGameStore } from "@/src/lib/sharedStore";
 import { NextResponse } from "next/server";
 import { games, players, startingGames } from "@/src/lib/gameStore";
 
@@ -5,7 +6,7 @@ import { normalizeGameCode, normalizeNickname } from "@/src/lib/gameValidation";
 
 import { assignPlayerToSession, readPlayerSession } from "@/src/lib/playerSession";
 
-export async function POST(request: Request, { params }: { params: Promise<{ code: string }> }) {
+async function handlePOST(request: Request, { params }: { params: Promise<{ code: string }> }) {
 
     const code = normalizeGameCode((await params).code);
     if (!code) {
@@ -52,3 +53,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
     assignPlayerToSession(playerID, response, session);
     return response;
 }
+
+export const POST = withGameStore(handlePOST);
+export const maxDuration = 60;

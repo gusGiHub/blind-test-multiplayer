@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { cookies } from "next/headers";
 import type { GameSnapshot } from "@/src/types/gameProgress";
 import GameLobby from "./GameLobby";
 import { DEFAULT_GAME_SETTINGS } from "@/src/lib/gameSettings";
-import { getInternalApiOrigin } from "@/src/lib/serverConfig";
+import { readGameAccess } from "@/src/lib/gameAccess";
 
 export default async function GamePage({ params, searchParams }: {
     params: Promise<{ code: string }>;
@@ -11,15 +10,7 @@ export default async function GamePage({ params, searchParams }: {
 }) {
     const { code } = await params;
     const { playerId } = await searchParams;
-    const response = await fetch(`${getInternalApiOrigin()}/api/games/${encodeURIComponent(code)}/access`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Cookie: (await cookies()).toString(),
-        },
-        body: JSON.stringify({ playerId }),
-        cache: "no-store",
-    });
+    const response = await readGameAccess(code, playerId);
 
     if ([400, 401, 403].includes(response.status)) {
         return (
@@ -32,6 +23,14 @@ export default async function GamePage({ params, searchParams }: {
                 </section>
             </main>
         );
+    }
+
+    if (response.status === 503) {
+        return <main id="main-content" className="page-shell page-shell--narrow"><section className="panel">
+            <h1>La salle est momentanément indisponible.</h1>
+            <p className="muted">Réessaie dans quelques instants pour retrouver ta partie.</p>
+            <Link className="btn btn-primary" href={`/game/${encodeURIComponent(code)}?playerId=${encodeURIComponent(playerId ?? "")}`}>Réessayer</Link>
+        </section></main>;
     }
 
     if (!response.ok) {

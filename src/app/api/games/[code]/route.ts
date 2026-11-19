@@ -1,8 +1,9 @@
+import { withGameStore } from "@/src/lib/sharedStore";
 import { games } from "@/src/lib/gameStore";
 import { getGamePlayers } from "@/src/lib/gameView";
 import { NextResponse } from "next/server";
 
-export async function GET(_request: Request, { params }: { params: Promise<{ code: string }> }) {
+async function handleGET(_request: Request, { params }: { params: Promise<{ code: string }> }) {
 
     const code = (await params).code;
 
@@ -16,3 +17,6 @@ export async function GET(_request: Request, { params }: { params: Promise<{ cod
 
     return NextResponse.json({ game, players: gamePlayers }, { headers: { "Cache-Control": "no-store" } });
 }
+
+export const GET = withGameStore(handleGET);
+export const maxDuration = 60;

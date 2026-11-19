@@ -1,8 +1,9 @@
+import { withGameStore } from "@/src/lib/sharedStore";
 import { NextResponse } from "next/server";
 import { readPlayerSession } from "@/src/lib/playerSession";
 import { completeSpotifyAuthorization, getRequestOrigin, getSpotifyConfig } from "@/src/lib/spotify";
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
     const url = new URL(request.url);
     const config = getSpotifyConfig();
     let destination = new URL("/spotify", config?.appUrl ?? url.origin);
@@ -19,3 +20,6 @@ export async function GET(request: Request) {
     response.headers.set("Referrer-Policy", "no-referrer");
     return response;
 }
+
+export const GET = withGameStore(handleGET);
+export const maxDuration = 60;

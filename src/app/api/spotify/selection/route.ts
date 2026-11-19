@@ -1,8 +1,9 @@
+import { withGameStore } from "@/src/lib/sharedStore";
 import { NextResponse } from "next/server";
 import { readPlayerSession } from "@/src/lib/playerSession";
 import { isSameOrigin } from "@/src/lib/spotify";
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
     if (!isSameOrigin(request)) return NextResponse.json({ error: "Origine de la demande invalide." }, { status: 403 });
     const session = await readPlayerSession();
     if (!session?.spotify) return NextResponse.json({ error: "Connecte ton compte Spotify." }, { status: 401 });
@@ -17,3 +18,5 @@ export async function POST(request: Request) {
     session.spotify.selectedPlaylist = playlist;
     return NextResponse.json({ selectedPlaylist: playlist }, { headers: { "Cache-Control": "private, no-store" } });
 }
+export const POST = withGameStore(handlePOST);
+export const maxDuration = 60;

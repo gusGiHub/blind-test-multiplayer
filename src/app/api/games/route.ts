@@ -1,3 +1,4 @@
+import { withGameStore } from "@/src/lib/sharedStore";
 import { randomInt } from "node:crypto";
 import { NextResponse } from "next/server";
 import type { Player, Game } from "@/src/types/game";
@@ -10,7 +11,7 @@ import { assignPlayerToSession, readPlayerSession } from "@/src/lib/playerSessio
 
 const MAX_CODE_ATTEMPTS = 100;
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
     let body;
     try {
         body = await request.json();
@@ -78,3 +79,6 @@ export async function POST(request: Request) {
     assignPlayerToSession(playerID, response, session);
     return response;
 }
+
+export const POST = withGameStore(handlePOST);
+export const maxDuration = 60;

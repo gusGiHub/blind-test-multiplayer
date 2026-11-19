@@ -1,8 +1,9 @@
+import { withGameStore } from "@/src/lib/sharedStore";
 import { NextResponse } from "next/server";
 import { readPlayerSession } from "@/src/lib/playerSession";
 import { getSpotifyPlaylistTracks, SpotifyError } from "@/src/lib/spotify";
 
-export async function GET(request: Request, { params }: { params: Promise<{ playlistId: string }> }) {
+async function handleGET(request: Request, { params }: { params: Promise<{ playlistId: string }> }) {
     const { playlistId } = await params;
     const value = new URL(request.url).searchParams.get("offset") ?? "0";
     const offset = Number(value);
@@ -23,3 +24,5 @@ export async function GET(request: Request, { params }: { params: Promise<{ play
         });
     }
 }
+export const GET = withGameStore(handleGET);
+export const maxDuration = 60;

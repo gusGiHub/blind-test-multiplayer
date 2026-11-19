@@ -1,9 +1,10 @@
+import { withGameStore } from "@/src/lib/sharedStore";
 import { NextResponse } from "next/server";
 import { ensurePlayerSession, readPlayerSession } from "@/src/lib/playerSession";
 import { beginSpotifyAuthorization, getSpotifyConfig, getRequestOrigin, isSameOrigin } from "@/src/lib/spotify";
 import { games, players } from "@/src/lib/gameStore";
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
     if (!isSameOrigin(request)) return NextResponse.json({ error: "Origine de la demande invalide." }, { status: 403 });
     const config = getSpotifyConfig();
     if (!config) return NextResponse.redirect(new URL("/spotify?error=configuration", getRequestOrigin(request)), 303);
@@ -30,3 +31,6 @@ export async function POST(request: Request) {
     response.headers.set("Location", beginSpotifyAuthorization(session, returnTo));
     return response;
 }
+
+export const POST = withGameStore(handlePOST);
+export const maxDuration = 60;

@@ -24,7 +24,7 @@ function lobbyFixture(isHost = true) {
     const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, jsx: ts.JsxEmit.ReactJSX } }).outputText;
     const exported = {};
     vm.runInNewContext(compiled, {
-        exports: exported,
+        exports: exported, process: { env: {} },
         require(name) {
             if (name === "react/jsx-runtime") return { jsx, jsxs: jsx, Fragment: "Fragment" };
             if (name === "next/link") return { default: "Link" };
@@ -35,6 +35,7 @@ function lobbyFixture(isHost = true) {
             if (name === "./QuestionChoices") return { default: "Choices", RoundCountdown: "Timer" };
             if (name === "./StartGameButton") return { default: Button };
             if (name === "socket.io-client") return { io: () => socket };
+            if (name === "@/src/lib/httpGameConnection") return { createHttpGameConnection: () => socket };
             if (name === "react") return {
                 useState(initial) { const index = cursor++; if (!(index in states)) states[index] = initial; return [states[index], value => { states[index] = typeof value === "function" ? value(states[index]) : value; }]; },
                 useRef(initial) { const index = cursor++; return states[index] ?? (states[index] = { current: initial }); },

@@ -12,6 +12,7 @@ export class GameEngineError extends Error {
 }
 export interface GameEngineOptions { automatic?: boolean; now?: () => number; settings?: GameSettings; }
 export interface GameEngine {
+    exportSnapshot(): EngineSnapshot;
     getState(): GameProgress;
     revealAnswer(questionNumber: number): GameProgress;
     nextQuestion(questionNumber: number): GameProgress;
@@ -22,6 +23,18 @@ export interface GameEngine {
     getPlayback(): { trackId: string; offsetMs: number; startsAt: number; endsAt: number } | null;
 }
 interface EngineTrack { id: string; title: string; artist: string; artists?: string[]; audioPath?: `/audio/${string}`; prompt?: string; spotifyUrl?: string; durationMs?: number; }
+/** Private persistence format. Never return this object from an API. */
+export interface EngineSnapshot {
+    version: 1; selected: EngineTrack[]; choicePool: EngineTrack[]; automatic: boolean; settings: GameSettings;
+    index: number; status: GameProgress["status"]; startsAt: number; endsAt: number; audioEndsAt: number;
+    resultEndsAt: number; offsetMs: number; choices: AnswerChoice[]; correctChoiceId: string;
+    answers: [string, PlayerAnswer][]; review: ReviewedRound[];
+    privateReview: [string, PlayerAnswer & { automatic: boolean } ][][];
+}
+export function restoreGameEngine(snapshot: EngineSnapshot, now?: () => number): GameEngine {
+    if (snapshot.version !== 1) throw new Error("Unsupported engine snapshot");
+    return createSelectedEngine(snapshot.selected, { automatic: snapshot.automatic, settings: snapshot.settings, now }, snapshot.choicePool, snapshot);
+}
 
 function shuffled<T>(values: readonly T[]): T[] {
     const result = [...values];
@@ -63,7 +76,7 @@ export function createGameEngineFromSpotifyPreview(preview: SpotifyQuestionPrevi
     const pool: EngineTrack[] = (preview.choicePool ?? []).map(track => ({ id: track.id, title: track.title, artist: track.artists.join(", "), artists: [...track.artists] }));
     return createSelectedEngine(selected, options, pool);
 }
-function createSelectedEngine(selected: readonly EngineTrack[], options: GameEngineOptions, choicePool: readonly EngineTrack[]): GameEngine {
+function createSelectedEngine(selected: readonly EngineTrack[], options: GameEngineOptions, choicePool: readonly EngineTrack[], snapshot?: EngineSnapshot): GameEngine {
     const automatic = Boolean(options.automatic);
     const settings = parseGameSettings(options.settings);
     if (!settings) throw new GameEngineError("INVALID_CATALOG", "Les paramètres de partie sont invalides.");
@@ -109,7 +122,12 @@ function createSelectedEngine(selected: readonly EngineTrack[], options: GameEng
             return { id, title: candidate.title, artist: candidate.artist };
         });
     };
-    prepare();
+    if (snapshot) {
+        ({ index, status, startsAt, endsAt, audioEndsAt, resultEndsAt, offsetMs, choices, correctChoiceId } = snapshot);
+        for (const [id, answer] of snapshot.answers) answers.set(id, { ...answer });
+        review.push(...snapshot.review);
+        privateReview.push(...snapshot.privateReview.map(round => new Map(round)));
+    } else prepare();
     const getQuestion = (): PublicQuestion => ({
         number: index + 1, total: selected.length,
         ...(selected[index].audioPath ? { audioPath: selected[index].audioPath } : {}),
@@ -139,6 +157,9 @@ function createSelectedEngine(selected: readonly EngineTrack[], options: GameEng
         return { playerId, correct, points: correct ? 10 + bonus : 0 };
     });
     return {
+        exportSnapshot: () => ({ version: 1, selected: selected.map(track => ({ ...track })), choicePool: choicePool.map(track => ({ ...track })), automatic, settings,
+            index, status, startsAt, endsAt, audioEndsAt, resultEndsAt, offsetMs, choices, correctChoiceId,
+            answers: Array.from(answers), review, privateReview: privateReview.map(round => Array.from(round)) }),
         getState,
         revealAnswer(number) {
             assertQuestion(number);

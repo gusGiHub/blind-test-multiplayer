@@ -1,9 +1,10 @@
+import { withGameStore } from "@/src/lib/sharedStore";
 import { NextResponse } from "next/server";
 import { readPlayerSession } from "@/src/lib/playerSession";
 import { getSpotifyConfig, SPOTIFY_PLAYBACK_SCOPES } from "@/src/lib/spotify";
 import { getCurrentGame } from "@/src/lib/currentGame";
 
-export async function GET() {
+async function handleGET() {
     const session = await readPlayerSession();
     const config = getSpotifyConfig();
     return NextResponse.json({
@@ -15,3 +16,6 @@ export async function GET() {
         selectedPlaylist: session?.spotify?.selectedPlaylist ?? null,
     }, { headers: { "Cache-Control": "private, no-store" } });
 }
+
+export const GET = withGameStore(handleGET);
+export const maxDuration = 60;

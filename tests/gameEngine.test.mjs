@@ -34,6 +34,25 @@ const tracks = Array.from({ length: 7 }, (_, index) => Object.freeze({
 }));
 const plain = value => JSON.parse(JSON.stringify(value));
 
+test("a persisted free-answer engine resumes its deadlines, points and private review without another draw", () => {
+    let clock = 1000;
+    const { createGameEngine } = loadEngine(() => 0);
+    const engine = createGameEngine(tracks, 1, { automatic: true, now: () => clock, settings: { mode: "free", excerptSeconds: 5, responseSeconds: 10, pauseSeconds: 2, excerptPosition: "start", scoring: "speed" } });
+    clock = engine.getState().question.startsAt + 1000;
+    engine.submitAnswer("me", 1, tracks[0].title);
+    const persisted = plain(engine.exportSnapshot());
+    const { restoreGameEngine } = loadEngine(() => { throw Error("restore must not draw again"); });
+    let restored = restoreGameEngine(persisted, () => clock);
+    assert.deepEqual(plain(restored.getState()), plain(engine.getState()));
+    assert.deepEqual(plain(restored.getAnswer("me")), plain(engine.getAnswer("me")));
+    restored.revealAnswer(1);
+    assert.equal(restored.getRoundPoints()[0].points, 19);
+    restored = restoreGameEngine(plain(restored.exportSnapshot()), () => clock);
+    restored.nextQuestion(1);
+    assert.equal(restored.getOwnReview("me")[0].responseMs, 1000);
+    assert.equal(restored.getOwnReview("me")[0].points, 19);
+});
+
 test("speed scoring uses server confirmation time, keeps retries stable and gives no bonus to unconfirmed drafts", () => {
     let clock = 1000;
     const { createGameEngine } = loadEngine(() => 0);
